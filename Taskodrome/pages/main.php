@@ -64,6 +64,8 @@
 
     print $users;
 
+    $t_status_board_order = plugin_config_get("status_board_order", null, false, null, $current_project_id);
+    $t_allowed_statuses = array_flip( $t_status_board_order );
     $t_all_statuses = array();
     $t_status_colors = array();
     $t_rows = count( $p_rows );
@@ -71,7 +73,8 @@
       $t_row = $p_rows[$i];
 
       $handler_id = $t_row->handler_id;
-      if (!array_key_exists($t_row->handler_id, $alive_user_ids))
+      if (!array_key_exists($t_row->handler_id, $alive_user_ids) || 
+          !array_key_exists($t_row->status, $t_allowed_statuses))
       {
         continue;
       }
@@ -159,7 +162,7 @@
     print '<p class="status_color_map" value="'.$status_color_map.'"></p>';
 
     $status_order = null;
-    foreach( convertStatusEnumToString( plugin_config_get("status_board_order", null, false, null, $current_project_id)) as $t_value ) {
+    foreach( convertStatusEnumToString( $t_status_board_order ) as $t_value ) {
       $status_order .= $t_value.';';
     }
 
